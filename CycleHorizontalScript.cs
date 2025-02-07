@@ -5,8 +5,8 @@ using UnityEngine;
 public class CycleHorizontalScript : MonoBehaviour
 {
     // using math we will make this object oscillate vertically using the sin function
-    private float amplitude;
-    public float frequency;
+    private float amplitude = 1.0f;
+    public float frequency = 1.0f;
     private Vector3 initialPosition;
 
     // Start is called before the first frame update
@@ -14,8 +14,6 @@ public class CycleHorizontalScript : MonoBehaviour
     {
         // get the initial position of the object
         Vector3 initialPosition = transform.position;
-        amplitude = 1.0f;
-        frequency = 1.0f;
     }
 
     // Update is called once per frame
