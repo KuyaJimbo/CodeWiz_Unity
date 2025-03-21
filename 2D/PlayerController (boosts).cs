@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;                 // FOR PHYSICS
     private SpriteRenderer spriteRenderer;  // FOR FLIPPING SPRITE
     private Animator animator;              // FOR ANIMATIONS
+    private float originalMoveSpeed;        // To store original value for boosts
     
     void Start()
     {
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        originalMoveSpeed = moveSpeed;      // Store the original value
     }
     
     void Update()
@@ -72,25 +74,20 @@ public class PlayerController : MonoBehaviour
         /*
         if (Input.GetKeyDown(KeyCode.B))
         {
-            StartCoroutine(ApplyBoost(5f, 2f, ref moveSpeed));
+            StartCoroutine(ApplyMoveSpeedBoost(5f, 2f));
         }
         */
     }
     
     /// <summary>
-    /// Temporarily boosts a player stat for a specified duration.
+    /// Temporarily boosts the player's move speed for a specified duration.
     /// </summary>
     /// <param name="duration">How long the boost should last in seconds</param>
-    /// <param name="boost">The multiplier to apply to the stat (2.0f would double it)</param>
-    /// <param name="player_stat">Reference to the stat being modified</param>
-    /// <returns>IEnumerator for coroutine handling</returns>
-    public IEnumerator ApplyBoost(float duration, float boost, ref float player_stat)
+    /// <param name="boost">The multiplier to apply to the speed (2.0f would double it)</param>
+    public IEnumerator ApplyMoveSpeedBoost(float duration, float boost)
     {
-        // Store the original value
-        float originalValue = player_stat;
-        
         // Apply the boost
-        player_stat *= boost;
+        moveSpeed = originalMoveSpeed * boost;
         
         // Optional: Add visual feedback that boost is active
         // For example, you could change the player's color
@@ -100,10 +97,54 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(duration);
         
         // Restore the original value
-        player_stat = originalValue;
+        moveSpeed = originalMoveSpeed;
         
         // Optional: Reset visual feedback
         // spriteRenderer.color = Color.white;
+    }
+    
+    /// <summary>
+    /// Temporarily boosts the player's jump force for a specified duration.
+    /// </summary>
+    /// <param name="duration">How long the boost should last in seconds</param>
+    /// <param name="boost">The multiplier to apply to the jump force (2.0f would double it)</param>
+    public IEnumerator ApplyJumpBoost(float duration, float boost)
+    {
+        float originalJumpForce = jumpForce;
+        jumpForce *= boost;
+        
+        yield return new WaitForSeconds(duration);
+        
+        jumpForce = originalJumpForce;
+    }
+    
+    /// <summary>
+    /// Generic method to apply temporary boost to any player stat.
+    /// </summary>
+    /// <param name="duration">How long the boost should last in seconds</param>
+    /// <param name="boost">The multiplier to apply to the stat</param>
+    /// <param name="statName">The name of the stat to boost ("moveSpeed" or "jumpForce")</param>
+    public IEnumerator ApplyBoost(float duration, float boost, string statName)
+    {
+        if (statName == "moveSpeed")
+        {
+            float original = moveSpeed;
+            moveSpeed *= boost;
+            
+            yield return new WaitForSeconds(duration);
+            
+            moveSpeed = original;
+        }
+        else if (statName == "jumpForce")
+        {
+            float original = jumpForce;
+            jumpForce *= boost;
+            
+            yield return new WaitForSeconds(duration);
+            
+            jumpForce = original;
+        }
+        // Add more stats as needed
     }
     
     // Check collisions with objects tagged "ground"
@@ -140,7 +181,13 @@ public class PlayerController : MonoBehaviour
         // Example: Apply a speed boost when picking up a power-up
         else if (other.CompareTag("SpeedBoost"))
         {
-            StartCoroutine(ApplyBoost(5f, 2f, ref moveSpeed));
+            StartCoroutine(ApplyMoveSpeedBoost(5f, 2f));
+            Destroy(other.gameObject);
+        }
+        // Example: Apply a jump boost when picking up a power-up
+        else if (other.CompareTag("JumpBoost"))
+        {
+            StartCoroutine(ApplyJumpBoost(5f, 1.5f));
             Destroy(other.gameObject);
         }
     }
