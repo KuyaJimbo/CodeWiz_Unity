@@ -83,13 +83,11 @@ public class PlayerController : MonoBehaviour
         }
         
         // Example usage of ApplyBoost - for demonstration purposes
-        // Uncomment to test with a key press
-        /*
         if (Input.GetKeyDown(KeyCode.B))
         {
             StartCoroutine(ApplyMoveSpeedBoost(5f, 2f));
         }
-        */
+        
     }
     
     /// <summary>
