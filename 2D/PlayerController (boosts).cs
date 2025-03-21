@@ -102,18 +102,11 @@ public class PlayerController : MonoBehaviour
         // Apply the boost
         moveSpeed = originalMoveSpeed * boost;
         
-        // Optional: Add visual feedback that boost is active
-        // For example, you could change the player's color
-        // spriteRenderer.color = Color.yellow;
-        
         // Wait for the duration
         yield return new WaitForSeconds(duration);
         
         // Restore the original value
         moveSpeed = originalMoveSpeed;
-        
-        // Optional: Reset visual feedback
-        // spriteRenderer.color = Color.white;
     }
     
     // HINT: To create a jump boost, follow these steps:
