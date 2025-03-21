@@ -11,7 +11,20 @@ using System.Collections;
 ///    - A_Jump (Trigger)
 ///    - A_Run (Float)
 ///    - A_Attack (Trigger)
+/// 
+/// IEnumerator Functions:
+/// This script uses IEnumerator functions for time-based effects like power-ups.
+/// IEnumerators in Unity allow code execution to be paused and resumed over time using
+/// the 'yield' keyword and coroutines. This is ideal for implementing temporary stat
+/// boosts where we need to:
+///   1. Apply a change to a player stat
+///   2. Wait for a specific duration
+///   3. Revert the change
+/// 
+/// To use an IEnumerator, it must be started as a coroutine with:
+/// StartCoroutine(FunctionName(parameters));
 /// </summary>
+
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -103,20 +116,12 @@ public class PlayerController : MonoBehaviour
         // spriteRenderer.color = Color.white;
     }
     
-    /// <summary>
-    /// Temporarily boosts the player's jump force for a specified duration.
-    /// </summary>
-    /// <param name="duration">How long the boost should last in seconds</param>
-    /// <param name="boost">The multiplier to apply to the jump force (2.0f would double it)</param>
-    public IEnumerator ApplyJumpBoost(float duration, float boost)
-    {
-        float originalJumpForce = jumpForce;
-        jumpForce *= boost;
-        
-        yield return new WaitForSeconds(duration);
-        
-        jumpForce = originalJumpForce;
-    }
+    // HINT: To create a jump boost, follow these steps:
+    // 1. Create a new IEnumerator method similar to ApplyMoveSpeedBoost
+    // 2. Store the original jump force value
+    // 3. Multiply jumpForce by the boost parameter
+    // 4. Wait for the specified duration
+    // 5. Reset jumpForce to the original value
     
     /// <summary>
     /// Generic method to apply temporary boost to any player stat.
@@ -135,15 +140,9 @@ public class PlayerController : MonoBehaviour
             
             moveSpeed = original;
         }
-        else if (statName == "jumpForce")
-        {
-            float original = jumpForce;
-            jumpForce *= boost;
-            
-            yield return new WaitForSeconds(duration);
-            
-            jumpForce = original;
-        }
+        // HINT: Add an else-if branch here to handle "jumpForce" boosts
+        // Follow the same pattern as the moveSpeed case
+        
         // Add more stats as needed
     }
     
@@ -184,11 +183,8 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(ApplyMoveSpeedBoost(5f, 2f));
             Destroy(other.gameObject);
         }
-        // Example: Apply a jump boost when picking up a power-up
-        else if (other.CompareTag("JumpBoost"))
-        {
-            StartCoroutine(ApplyJumpBoost(5f, 1.5f));
-            Destroy(other.gameObject);
-        }
+        
+        // HINT: Add another else-if branch here to handle jump boost power-ups
+        // It should call your jump boost method similar to how the speed boost is handled
     }
 }
